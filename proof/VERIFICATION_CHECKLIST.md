@@ -6,31 +6,36 @@
 - [x] Production contract + typed consumer
 - [x] Purple Comic Sans frontend
 - [x] Static preflight
-- [x] Direct Mode adversarial tests present
+- [x] Direct Mode adversarial suite
 - [x] Architecture / invariants / threat model / reviewer demo
-- [x] CI workflow source
+- [x] Permanent CI workflow
+- [x] Wallet reload hydration + connected-wallet menu implementation
 
-## Local execution
-- [ ] GenLayer Direct Mode suite passes in authenticated/full runtime
-- [ ] `genvm-lint` / current GenLayer contract validator clean
-- [ ] frontend `npm install --no-audit --no-fund` clean
-- [ ] frontend typecheck clean
-- [ ] frontend production build clean
+## Verified CI — run 36279487572
+- [x] Python compilation
+- [x] Repository preflight — 16/16
+- [x] GenVM lint / validation
+- [x] Direct Mode — 17/17
+- [x] frontend dependency install
+- [x] frontend TypeScript typecheck
+- [x] frontend production build
 
-## StudioNet
+## StudioNet — deployment agent required
 - [ ] canonical contract deployed
 - [ ] contract address recorded
 - [ ] deployment tx recorded
 - [ ] deployed source commit recorded
-- [ ] PARITY lifecycle finalized
-- [ ] MATERIAL_DRIFT lifecycle finalized
-- [ ] re-evaluation revert proven
-- [ ] successor lineage proven
-- [ ] consumer hash pinning proven
+- [ ] deployed source SHA-256 recorded
+- [ ] PARITY lifecycle finalized under real multi-validator consensus
+- [ ] MATERIAL_DRIFT lifecycle finalized under real multi-validator consensus
+- [ ] re-evaluation revert proven live
+- [ ] successor lineage proven live
+- [ ] consumer hash pinning proven live
 
-## Frontend
+## Production frontend — deployment agent required
 - [ ] canonical contract env configured
 - [ ] deployed to Vercel
-- [ ] wallet connection verified
+- [ ] injected wallet behavior manually verified in browser
 - [ ] live counts verified
 - [ ] register/evaluate/read flow verified
+- [ ] explorer links verified against canonical deployment
