@@ -36,7 +36,7 @@ jobs:
           if new not in text:
               raise SystemExit("expected SDK compatibility patch target missing")
           p.write_text(text)
-          Path("requirements-test.txt").write_text("pytest>=8.0,<9\\ngenlayer-test\\ngenvm-linter\\n")
+          Path("requirements-test.txt").write_text("pytest>=8.0,<9\ngenlayer-test\ngenvm-linter\n")
           PY
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
