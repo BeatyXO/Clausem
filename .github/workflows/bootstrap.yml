@@ -25,6 +25,18 @@ jobs:
           cat .bootstrap/part*.b64 > /tmp/clausem.b64
           base64 -d /tmp/clausem.b64 > /tmp/clausem.zip
           unzip -oq /tmp/clausem.zip -d .
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("frontend/src/lib/genlayer.ts")
+          text = p.read_text()
+          old = "const hash = await client.writeContract({ address: CONTRACT_ADDRESS, functionName, args: args as never[] })"
+          new = "const hash = await client.writeContract({ address: CONTRACT_ADDRESS, functionName, args: args as never[], value: 0n })"
+          if old in text:
+              text = text.replace(old, new)
+          if new not in text:
+              raise SystemExit("expected SDK compatibility patch target missing")
+          p.write_text(text)
+          PY
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
 
