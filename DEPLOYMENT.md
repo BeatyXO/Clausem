@@ -2,54 +2,56 @@
 
 Target network: **GenLayer StudioNet (chain 61999)**.
 
-## Gate 1 — local/static
+## Verified build baseline
 
-```bash
-python -m py_compile contracts/clausem.py contracts/clausem_consumer.py
-python scripts/preflight.py
-```
+Before live deployment, canonical CI already passed:
 
-## Gate 2 — GenLayer Direct Mode
+- Python compilation
+- preflight **16/16**
+- GenVM lint / validation
+- Direct Mode **17/17**
+- frontend install
+- frontend TypeScript
+- frontend production build
 
-Use the repository's pinned GenLayer runner/tooling and run:
+Verified workflow run: `36279487572`.
 
-```bash
-pip install -r requirements-test.txt
-pytest -q
-```
+Direct Mode compatibility is pinned in the repository to:
+- `genlayer-test==0.29.2`
+- `sdk_version="v0.2.16"`
 
-Do not proceed to canonical deployment if Direct Mode exposes a real runtime incompatibility.
+These match the contract's pinned GenLayer runtime. Re-run locally before deployment, but do not upgrade the runner casually.
 
-## Gate 3 — deploy contract
+## Gate 1 — canonical StudioNet deployment
 
-Deploy `contracts/clausem.py` to StudioNet using the authenticated GenLayer Studio/CLI environment.
+Deploy the exact current `contracts/clausem.py` from `main` using the authenticated GenLayer Studio/CLI environment.
 
 Record:
 
 - contract address;
 - deployment tx hash;
-- final source commit SHA;
+- exact source commit SHA;
 - source file SHA-256;
 - finalized/success execution status.
 
-Do not invent these values in documentation before they exist.
+Do not invent these values.
 
-## Gate 4 — real-consensus lifecycle
+## Gate 2 — real-consensus lifecycle
 
 Run at minimum:
 
-1. registration of an immutable pair;
-2. one `PARITY` evaluation;
-3. one `MATERIAL_DRIFT` evaluation;
-4. wrong-hash `is_parity` rejection;
+1. one immutable pair that finalizes as `PARITY`;
+2. one immutable pair with an obvious material difference that finalizes as `MATERIAL_DRIFT`;
+3. correct `is_parity` true proof;
+4. wrong-hash `is_parity` false proof;
 5. re-evaluation revert;
-6. successor registration.
+6. successor registration with parent preserved.
 
 Persist transaction hashes, pair IDs, pair/evaluation hashes and result payloads under `proof/` or `docs/`.
 
-## Gate 5 — frontend wiring
+## Gate 3 — frontend wiring
 
-Set Vercel or local environment variables:
+Set:
 
 ```text
 VITE_CONTRACT_ADDRESS=<canonical StudioNet address>
@@ -60,20 +62,23 @@ Then:
 
 ```bash
 cd frontend
-npm install --no-audit --no-fund
+npm ci --no-audit --no-fund
 npm run typecheck
 npm run build
 ```
 
-For Vercel, the root `vercel.json` uses the frontend package and outputs `frontend/dist`.
+Deploy through the authenticated Vercel environment.
 
-Verify production manually:
+Verify in browser:
 
-- wallet connects;
-- StudioNet is added/switched correctly;
+- an already-authorized injected wallet silently hydrates after reload;
+- connected-wallet menu exposes Copy address, explorer and Disconnect;
+- local Disconnect persists across reload until explicit Connect;
+- wallet account/network changes reconcile correctly;
+- StudioNet add/switch works;
 - dashboard reads live counts;
 - pair registration signs from the user's wallet;
-- pair explorer reads live pair/evaluation data;
-- evaluation write submits to canonical address;
-- explorer links point at canonical address/transactions;
-- no “preview mode” banner appears once address is configured.
+- evaluation writes to the canonical address;
+- pair/evaluation reads are live;
+- explorer links use real address/transactions;
+- no preview banner remains once the canonical address is configured.
