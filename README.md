@@ -87,6 +87,10 @@ Clausem narrows GenLayer consensus to one bounded job:
 The Vite/React frontend is intentionally direct-to-GenLayer. There is no authoritative backend or server-held writer key.
 
 - injected wallet connection (MetaMask, Rabby, compatible EIP-1193 wallet);
+- silent authorized-wallet hydration after reload without repeated connect prompts;
+- account/network/disconnect event reconciliation;
+- connected-wallet menu with copy address, explorer and disconnect actions;
+- local disconnect persistence so a reload does not silently reconnect;
 - automatic GenLayer StudioNet chain add/switch;
 - live `get_counts()` registry discovery;
 - recent pair dashboard;
