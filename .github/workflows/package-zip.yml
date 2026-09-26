@@ -1,0 +1,25 @@
+name: Package Clausem ZIP
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build clean source ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/package-zip.yml
+          rm -rf .git
+          zip -qr Clausem-Codex.zip . -x "Clausem-Codex.zip"
+      - name: Upload Clausem ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Clausem-Codex
+          path: Clausem-Codex.zip
+          if-no-files-found: error
+          retention-days: 7
