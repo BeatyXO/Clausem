@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BookOpenCheck,
   Braces,
   CheckCircle2,
+  Check,
+  ChevronDown,
+  Copy,
   ChevronRight,
   CircleAlert,
   ExternalLink,
@@ -12,6 +15,7 @@ import {
   Globe2,
   Languages,
   Link2,
+  LogOut,
   LoaderCircle,
   Network,
   RefreshCw,
@@ -26,9 +30,10 @@ import {
   CHAIN_HEX,
   CONTRACT_ADDRESS,
   connectWallet,
+  disconnectInjectedWallet,
   explorerAddress,
   explorerTx,
-  getAuthorizedWalletSnapshot,
+  hydrateAuthorizedWallet,
   inspectTransaction,
   isContractConfigured,
   readContract,
@@ -114,6 +119,9 @@ function App() {
   const [walletClient, setWalletClient] = useState<WalletClient | null>(null)
   const [walletBusy, setWalletBusy] = useState(false)
   const [walletError, setWalletError] = useState('')
+  const [walletMenuOpen, setWalletMenuOpen] = useState(false)
+  const [walletCopied, setWalletCopied] = useState(false)
+  const walletMenuRef = useRef<HTMLDivElement | null>(null)
   const [counts, setCounts] = useState<Counts>({ pair_count: 0, evaluation_count: 0 })
   const [recentPairs, setRecentPairs] = useState<PairRecord[]>([])
   const [registryLoading, setRegistryLoading] = useState(false)
@@ -153,12 +161,70 @@ function App() {
   }, [refreshRegistry])
 
   useEffect(() => {
-    void getAuthorizedWalletSnapshot().then(snapshot => {
-      if (snapshot.address && snapshot.chainId === CHAIN_HEX && window.ethereum) {
-        setWalletAddress(snapshot.address)
+    let active = true
+    const provider = window.ethereum
+
+    const hydrate = async () => {
+      try {
+        const snapshot = await hydrateAuthorizedWallet()
+        if (!active) return
+        if (snapshot.address && snapshot.chainId === CHAIN_HEX && snapshot.client) {
+          setWalletAddress(snapshot.address)
+          setWalletClient(snapshot.client)
+          setWalletError('')
+        } else {
+          setWalletAddress('')
+          setWalletClient(null)
+        }
+      } catch {
+        if (active) {
+          setWalletAddress('')
+          setWalletClient(null)
+        }
       }
-    }).catch(() => undefined)
+    }
+
+    void hydrate()
+    if (!provider?.on) return () => { active = false }
+
+    const onAccountsChanged = () => { void hydrate() }
+    const onChainChanged = () => { void hydrate() }
+    const onDisconnect = () => {
+      if (!active) return
+      setWalletAddress('')
+      setWalletClient(null)
+      setWalletMenuOpen(false)
+    }
+
+    provider.on('accountsChanged', onAccountsChanged)
+    provider.on('chainChanged', onChainChanged)
+    provider.on('disconnect', onDisconnect)
+
+    return () => {
+      active = false
+      provider.removeListener?.('accountsChanged', onAccountsChanged)
+      provider.removeListener?.('chainChanged', onChainChanged)
+      provider.removeListener?.('disconnect', onDisconnect)
+    }
   }, [])
+
+  useEffect(() => {
+    if (!walletMenuOpen) return
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (walletMenuRef.current && !walletMenuRef.current.contains(event.target as Node)) {
+        setWalletMenuOpen(false)
+      }
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setWalletMenuOpen(false)
+    }
+    document.addEventListener('mousedown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [walletMenuOpen])
 
   const connect = async () => {
     setWalletBusy(true)
@@ -167,6 +233,7 @@ function App() {
       const result = await connectWallet()
       setWalletAddress(result.address)
       setWalletClient(result.client)
+      setWalletMenuOpen(false)
     } catch (error) {
       setWalletError(error instanceof Error ? error.message : String(error))
     } finally {
@@ -180,6 +247,33 @@ function App() {
     setWalletAddress(result.address)
     setWalletClient(result.client)
     return result.client
+  }
+
+  const copyWalletAddress = async () => {
+    if (!walletAddress) return
+    try {
+      await navigator.clipboard.writeText(walletAddress)
+    } catch {
+      const textarea = document.createElement('textarea')
+      textarea.value = walletAddress
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      textarea.remove()
+    }
+    setWalletCopied(true)
+    window.setTimeout(() => setWalletCopied(false), 1400)
+  }
+
+  const disconnectWallet = async () => {
+    await disconnectInjectedWallet()
+    setWalletAddress('')
+    setWalletClient(null)
+    setWalletMenuOpen(false)
+    setWalletCopied(false)
+    setWalletError('')
   }
 
   const loadDemoForm = () => {
@@ -318,9 +412,42 @@ function App() {
             </button>
           ))}
         </nav>
-        <div className="wallet-area">
+        <div className="wallet-area" ref={walletMenuRef}>
           {walletAddress ? (
-            <span className="wallet-chip"><span className="wallet-dot" />{shortAddress(walletAddress)}</span>
+            <>
+              <button
+                className={walletMenuOpen ? 'wallet-chip wallet-chip-open' : 'wallet-chip'}
+                onClick={() => setWalletMenuOpen(open => !open)}
+                aria-expanded={walletMenuOpen}
+                aria-haspopup="menu"
+                type="button"
+              >
+                <span className="wallet-dot" />
+                {shortAddress(walletAddress)}
+                <ChevronDown className={walletMenuOpen ? 'wallet-chevron wallet-chevron-open' : 'wallet-chevron'} size={14} />
+              </button>
+              {walletMenuOpen && (
+                <div className="wallet-menu" role="menu">
+                  <div className="wallet-menu-head">
+                    <span>Connected wallet</span>
+                    <code title={walletAddress}>{shortAddress(walletAddress, 10, 8)}</code>
+                  </div>
+                  <button type="button" role="menuitem" onClick={() => void copyWalletAddress()}>
+                    {walletCopied ? <Check size={16} /> : <Copy size={16} />}
+                    <span>{walletCopied ? 'Copied' : 'Copy address'}</span>
+                  </button>
+                  <a href={explorerAddress(walletAddress)} target="_blank" rel="noreferrer" role="menuitem">
+                    <ExternalLink size={16} />
+                    <span>View on explorer</span>
+                  </a>
+                  <div className="wallet-menu-rule" />
+                  <button className="wallet-disconnect" type="button" role="menuitem" onClick={() => void disconnectWallet()}>
+                    <LogOut size={16} />
+                    <span>Disconnect</span>
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <button className="button button-ghost" onClick={connect} disabled={walletBusy}>
               {walletBusy ? <LoaderCircle className="spin" size={17} /> : <Wallet size={17} />}
