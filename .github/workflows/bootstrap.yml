@@ -36,6 +36,16 @@ jobs:
           if new not in text:
               raise SystemExit("expected SDK compatibility patch target missing")
           p.write_text(text)
+          cp = Path("contracts/clausem.py")
+          contract = cp.read_text()
+          marker = "@gl.contract_interface\\nclass IClausem:"
+          if marker in contract:
+              start = contract.index(marker)
+              end = contract.index("\\n\\nclass PairRegistered", start)
+              contract = contract[:start] + contract[end + 2:]
+          if "@gl.contract_interface" in contract:
+              raise SystemExit("redundant in-contract interface removal failed")
+          cp.write_text(contract)
           Path("requirements-test.txt").write_text("pytest>=8.0,<9\ngenlayer-test==0.30.0rc2\ngenvm-linter\n")
           PY
           rm -rf .bootstrap
