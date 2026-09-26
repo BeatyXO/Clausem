@@ -37,6 +37,15 @@ jobs:
               raise SystemExit("expected SDK compatibility patch target missing")
           p.write_text(text)
           Path("requirements-test.txt").write_text("pytest>=8.0,<9\ngenlayer-test==0.29.2\ngenvm-linter\n")
+          tp = Path("tests/test_clausem.py")
+          tests = tp.read_text()
+          old = 'return direct_deploy("contracts/clausem.py")'
+          new = 'return direct_deploy("contracts/clausem.py", sdk_version="v0.2.16")'
+          if old in tests:
+              tests = tests.replace(old, new)
+          if new not in tests:
+              raise SystemExit("expected Direct Mode deploy helper not found")
+          tp.write_text(tests)
           PY
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
