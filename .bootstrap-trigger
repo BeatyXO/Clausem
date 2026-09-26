@@ -1,1 +1,1 @@
-retry stable direct-mode runner
+retry with v0.2.16 direct mode bundle
