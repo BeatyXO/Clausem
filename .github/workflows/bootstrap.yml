@@ -36,6 +36,7 @@ jobs:
           if new not in text:
               raise SystemExit("expected SDK compatibility patch target missing")
           p.write_text(text)
+          Path("requirements-test.txt").write_text("pytest>=8.0,<9\\ngenlayer-test\\ngenvm-linter\\n")
           PY
           rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
@@ -63,13 +64,17 @@ jobs:
         shell: bash
         run: npm run build --prefix frontend
 
-      - name: Attempt GenLayer Direct Mode tests
-        id: direct_mode
-        continue-on-error: true
+      - name: Install GenLayer test tooling
         shell: bash
-        run: |
-          python -m pip install -r requirements-test.txt
-          pytest -q
+        run: python -m pip install -r requirements-test.txt
+
+      - name: GenVM lint
+        shell: bash
+        run: genvm-lint check contracts/clausem.py
+
+      - name: GenLayer Direct Mode tests
+        shell: bash
+        run: pytest -q
 
       - name: Commit finished source tree
         shell: bash
@@ -77,6 +82,8 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/quality.yml
+          git checkout -- .github/workflows/bootstrap.yml
           git add -A
           git commit -m "Build Clausem application"
           git push origin HEAD:main
