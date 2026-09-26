@@ -1,223 +1,164 @@
-You are taking over a substantially implemented GenLayer project named Clausem.
+# Clausem — Deployment / Live-Proof Handoff
 
-Do not return only a plan, checklist, commentary, mockup, or code snippets. Inspect the entire repository first, then finish the existing project to a review-ready, submission-ready state in place and push all completed work to:
+You are taking over an already-built and CI-verified GenLayer project named **Clausem**.
 
+Repository:
 https://github.com/BeatyXO/Clausem.git
 
-The repository already contains the intended product architecture. Preserve it unless an actual GenLayer runtime/test failure proves a change is necessary.
+Do not redesign the product, replace the frontend, introduce a backend, or return only a plan/checklist. Inspect the current `main` branch, preserve the existing architecture, then complete the remaining **environment-dependent deployment and live-proof work** in place and push the final evidence/docs to `main`.
 
-# PRODUCT BOUNDARY
+## Already completed — do not redo as speculative rewrites
 
-Clausem is a consensus-backed material-parity registry for immutable multilingual policy/terms documents.
+The canonical repository already has:
 
-A creator registers two immutable source documents (A = reference language/version, B = compared language/version), selects material categories, and receives a fixed pair hash. A pair is evaluated exactly once. GenLayer validators independently fetch both exact sources, hash the complete returned bytes, independently classify only the requested material categories, and must agree on BOTH the exact evidence identity and the exact semantic category vector. Deterministic contract logic then derives one final result:
+- production contract `contracts/clausem.py`;
+- typed consumer example;
+- immutable commit-pinned GitHub/IPFS/Arweave source validation;
+- exact source hash + source-size validator binding;
+- constrained category semantic vector;
+- deterministic `PARITY / MATERIAL_DRIFT / AMBIGUOUS`;
+- single-shot evaluation and successor lineage;
+- React/Vite direct-to-GenLayer frontend;
+- purple multi-shade styling + Comic Sans;
+- injected wallet StudioNet add/switch;
+- silent wallet hydration after reload;
+- account/network/disconnect reconciliation;
+- connected-wallet dropdown with Copy address, explorer and Disconnect;
+- local disconnect persistence;
+- permanent GitHub quality workflow.
 
-- PARITY
-- MATERIAL_DRIFT
-- AMBIGUOUS
+Verified GitHub Actions run: `36279487572`
 
-Per-category statuses are constrained to:
+That run passed:
+- Python compilation;
+- preflight 16/16;
+- GenVM lint;
+- Direct Mode 17/17;
+- frontend install;
+- frontend TypeScript;
+- frontend production build.
 
-- EQUIVALENT
-- NARROWER_IN_B
-- BROADER_IN_B
-- CONFLICT
-- MISSING_IN_A
-- MISSING_IN_B
-- NOT_APPLICABLE
-- AMBIGUOUS
+Direct Mode is pinned to `genlayer-test==0.29.2` with `sdk_version="v0.2.16"`, matching the contract's pinned runtime. Do not casually upgrade the runner just because a newer one exists.
 
-A finalized pair must never be re-adjudicated. Revised source documents must be represented by a successor pair with a new pair hash and a parent pointer. Historical downstream bindings must remain stable.
+## Product boundary
 
-Clausem is NOT:
+Clausem verifies whether two immutable language/version policy documents preserve the same material meaning. It is not a grant, escrow, milestone, reward, bounty, challenge-bond or token protocol.
 
-- a grant system
-- milestone escrow
-- a token/reward protocol
-- a challenge-bond system
-- generic "AI judges a document" infrastructure
-- a legal-advice product
-- a translation quality score
+Do not add grants, funder/grantee roles, payouts, tranches, token custody, challenge bonds or generic AI-judge features.
 
-Do not introduce grants, milestones, tranches, payouts, funder/grantee roles, challenge bonds, bounty math or token custody.
+## Invariants that must remain intact
 
-# NON-NEGOTIABLE CONTRACT INVARIANTS
+1. Accepted sources stay immutable forms only.
+2. Leader/validator consensus stays bound to exact source hashes, source sizes and category-status vector.
+3. No leader-only field may influence persisted outcome.
+4. Malformed semantic output fails closed to AMBIGUOUS.
+5. Overall result remains deterministic.
+6. Evaluation remains single-shot.
+7. Successor creation never mutates/invalidate the parent.
+8. `is_parity` requires both expected pair hash and expected evaluation hash.
+9. Never fabricate deployment evidence.
 
-1. Sources must remain immutable forms only: commit-pinned raw GitHub, IPFS CID, or Arweave transaction URLs.
-2. Do not weaken source immutability to accept branch URLs or normal mutable websites.
-3. Leader/validator equivalence must compare exact source hashes AND exact source sizes AND exact category status vector.
-4. No un-compared leader-only field may influence the persisted final result.
-5. Malformed semantic output must fail closed to AMBIGUOUS, never PARITY.
-6. `deterministic_overall` must stay pure/deterministic with no web/LLM access.
-7. Pair evaluation is single-shot.
-8. Successor registration must not mutate or invalidate the parent.
-9. `is_parity` must require expected pair hash AND expected evaluation hash.
-10. Keep the typed consumer example working.
-11. Do not fabricate deployment evidence, transaction hashes, contract addresses, test counts or live URLs.
+## Your remaining work
 
-# FRONTEND BOUNDARY
+### 1. Confirm exact source before deployment
 
-The frontend is already implemented under `frontend/` and should remain direct-to-GenLayer rather than introducing an authoritative backend.
+Pull current `main`.
 
-Visual direction is intentional and must be preserved:
+Run a quick confirmation:
+```bash
+python -m py_compile contracts/clausem.py contracts/clausem_consumer.py tests/test_clausem.py tests/conftest.py
+python scripts/preflight.py
+pip install -r requirements-test.txt
+genvm-lint check contracts/clausem.py
+pytest -q
+cd frontend
+npm ci --no-audit --no-fund
+npm run typecheck
+npm run build
+```
 
-- dark purple base
-- multiple distinct purple shades
-- purple glass/panel styling
-- Comic Sans / Comic Sans MS typography
-- responsive desktop/mobile layout
+If these differ from the already-green CI, diagnose the environment before changing architecture.
 
-The frontend should support:
+### 2. Canonical StudioNet deployment
 
-- injected wallet connection (Rabby/MetaMask compatible EIP-1193)
-- StudioNet add/switch (chain 61999 / 0xf22f)
-- live registry counts
-- recent pairs
-- register new pair
-- register successor pair
-- select material categories
-- pair explorer
-- one-shot evaluation trigger
-- source/evaluation hashes
-- category matrix
-- explorer links
-- clear preview mode when no canonical address is configured
+Deploy the exact current `contracts/clausem.py` to GenLayer StudioNet (chain 61999) using the authenticated wallet/CLI available to you.
 
-Do not make preview/demo values appear to be live onchain facts.
+Record real evidence:
+- contract address;
+- deployment tx;
+- finalized/execution status;
+- exact deployed source commit SHA;
+- SHA-256 of deployed `contracts/clausem.py`.
 
-# REQUIRED FINISH WORK
+Do not proceed with invented placeholders.
 
-Work through the following gates. Continue as far as the environment genuinely permits instead of stopping at the first blocker.
+### 3. Real multi-validator reviewer proof
 
-## Gate 1 — inspect and static audit
+Use immutable public source documents accessible to StudioNet validators.
 
-- Read every contract, test, frontend, script and documentation file.
-- Confirm all naming is Clausem (not ClauseMirror) except where historical comparison is explicitly discussed.
-- Confirm the pinned GenLayer runner is valid/current for the target environment.
-- Run Python compilation and repository preflight.
-- Audit source URL validation and content-size handling for GenVM compatibility.
-- Inspect every storage type and public interface for GenLayer constraints.
+Create and finalize at least:
 
-## Gate 2 — GenLayer runtime / Direct Mode
+**A. PARITY pair**
+- register pair;
+- evaluate;
+- read pair/evaluation;
+- record pair ID, pair hash, evaluation hash and tx hashes;
+- show `is_parity(correct hashes) == true`;
+- show a wrong expected pair/evaluation hash returns false.
 
-Use the available GenLayer SDK/CLI/test tooling. Run the complete Direct Mode suite.
+**B. MATERIAL_DRIFT pair**
+- use a second immutable pair with one obvious material difference;
+- evaluate;
+- record the relevant category state and overall `MATERIAL_DRIFT`;
+- retain transaction evidence.
 
-The suite must exercise at least:
+**C. Finality/version lineage**
+- prove re-evaluating the finalized pair reverts;
+- register a successor;
+- prove the parent remains unchanged/final;
+- prove the successor has a new pair hash and correct parent pointer.
 
-- mutable branch URL rejection
-- immutable pair hash
-- category input validation
-- PARITY path
-- MATERIAL_DRIFT path
-- missing material clause path
-- malformed semantic output -> AMBIGUOUS
-- leader semantic forgery rejected by validator
-- source bytes changed while semantic vector stays same -> validator rejects
-- identical evidence + vector -> validator accepts
-- pair cannot be evaluated twice
-- successor has new pair hash while parent remains final
-- wrong pair/evaluation hash rejected by `is_parity`
-- counts/view consistency
+Persist concise machine-readable evidence under `proof/` or `docs/`.
 
-If a real runtime error appears, fix the implementation and add/strengthen a regression test. Do not change architecture just to silence a test without understanding the failure.
+### 4. Production frontend
 
-Also run the current recommended GenLayer linter/validator. Record the real output.
+Set:
+```text
+VITE_CONTRACT_ADDRESS=<canonical StudioNet contract>
+VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
+```
 
-## Gate 3 — frontend verification
+Build fresh and deploy to Vercel using the authenticated project/account available to you.
 
-From `frontend/`:
+Manually verify in browser:
+- existing authorized injected wallet hydrates after reload without a fresh connect prompt;
+- clicking the connected wallet opens Copy address / View on explorer / Disconnect;
+- Disconnect clears Clausem session and stays disconnected after reload until Connect is explicitly clicked;
+- account/network changes reconcile cleanly;
+- StudioNet switching works;
+- live counts load;
+- register/evaluate/read works against canonical address;
+- transaction pending vs finalized state is accurate;
+- explorer links point to real address/transactions;
+- preview-mode warning is absent in production.
 
-- `npm install --no-audit --no-fund`
-- `npm run typecheck`
-- `npm run build`
+### 5. Final evidence/docs
 
-Fix any TypeScript, SDK or Vite incompatibility using the actually installed `genlayer-js` API rather than assuming newer docs match version 1.1.8.
+Update `BUILD_STATUS.md`, `DEPLOYMENT.md`, `SUBMISSION.md` and `proof/VERIFICATION_CHECKLIST.md` with real values only.
 
-Verify the frontend never reports a submitted transaction as failed merely because StudioNet has not finalized yet. Preserve pending/finalized distinction.
+Push all completed work to `main`.
 
-## Gate 4 — GitHub quality
+## Final response
 
-- Ensure all finished changes are committed and pushed to `main`.
-- Ensure repository docs match actual state.
-- If GitHub Actions workflow creation/push is permitted, verify the quality workflow runs. If workflow permission is unavailable, do not claim CI passed; document the exact limitation.
-
-## Gate 5 — canonical StudioNet deployment
-
-If deployment credentials and StudioNet access are available, deploy `contracts/clausem.py`.
-
-Record real evidence only:
-
-- contract address
-- deployment tx
-- source commit SHA
-- source SHA-256
-- finalized status
-- execution success
-
-If deployment access is unavailable, leave the repository correctly marked PENDING and do not invent evidence.
-
-## Gate 6 — real-consensus reviewer proof
-
-Against the canonical deployed address run real StudioNet lifecycles:
-
-A. PARITY
-- register immutable A/B sources
-- evaluate under real multi-validator consensus
-- read pair + evaluation
-- prove correct `is_parity(...) == true`
-- prove wrong pair/evaluation hash returns false
-
-B. MATERIAL_DRIFT
-- register a second immutable pair with one clear material change (for example a deadline/termination right)
-- evaluate
-- show the relevant per-category drift state and overall MATERIAL_DRIFT
-
-C. Finality/versioning
-- prove a finalized pair cannot be evaluated again
-- register a successor pair
-- prove parent hash/result remain unchanged
-- prove successor has new pair hash and correct parent pointer
-
-Persist a concise machine-readable lifecycle evidence file under `proof/` or `docs/`. Do not place secrets/private keys in the repo.
-
-## Gate 7 — production frontend
-
-After a canonical contract address exists:
-
-- set `VITE_CONTRACT_ADDRESS`
-- build fresh
-- deploy frontend to Vercel if authenticated Vercel access is available
-- verify wallet connect, StudioNet switching, live counts, registration, evaluate, pair/evaluation reads and explorer links
-- confirm preview-mode warning disappears on production
-
-Record the real production URL only after it exists.
-
-# REVIEWER-QUALITY STANDARD
-
-Before declaring completion, audit the result like a skeptical reviewer:
-
-- Is GenLayer consensus actually necessary and substantive?
-- Does equivalence compare semantic material rather than JSON shape alone?
-- Are the exact evidence bytes consensus-bound?
-- Can one arbitrary caller mutate a finalized result?
-- Can a successor invalidate a historical consumer binding?
-- Can malformed LLM output become approval?
-- Are semantic ambiguity and model limitations honestly represented?
-- Does the frontend read/write the real canonical contract rather than a mock API?
-- Do docs distinguish proven live evidence from pending work?
-- Does the product remain obviously distinct from milestone/grant/escrow submissions?
-
-Do not assign an inflated score just because the repository is large. Fix substantive weaknesses you find.
-
-# FINAL RESPONSE FORMAT
-
-When finished, report:
-
+Report:
 1. final Git commit SHA;
-2. exact local/runtime test results;
-3. frontend typecheck/build results;
-4. GenLayer linter/runtime result;
-5. canonical contract address + deployment tx, ONLY if actually deployed;
-6. live lifecycle IDs/tx hashes, ONLY if actually executed;
-7. production frontend URL, ONLY if actually deployed;
-8. any remaining blocker with a precise reason.
+2. contract address + explorer link;
+3. deployment tx;
+4. source SHA-256;
+5. real PARITY and MATERIAL_DRIFT pair IDs/hashes/txs;
+6. finality/successor proof;
+7. Vercel URL;
+8. final CI/test results;
+9. any genuinely unresolved blocker.
+
+Do not claim a live result unless you actually observed it.
