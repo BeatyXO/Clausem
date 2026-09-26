@@ -76,6 +76,20 @@ export async function ensureStudioNet(provider: NonNullable<Window['ethereum']>)
   }
 }
 
+const LOCAL_DISCONNECT_KEY = 'clausem.wallet.disconnected'
+
+export function markWalletConnected() {
+  try { window.localStorage.removeItem(LOCAL_DISCONNECT_KEY) } catch { /* storage unavailable */ }
+}
+
+export function markWalletDisconnected() {
+  try { window.localStorage.setItem(LOCAL_DISCONNECT_KEY, '1') } catch { /* storage unavailable */ }
+}
+
+export function wasWalletLocallyDisconnected(): boolean {
+  try { return window.localStorage.getItem(LOCAL_DISCONNECT_KEY) === '1' } catch { return false }
+}
+
 export async function connectWallet() {
   const provider = window.ethereum
   if (!provider) throw new Error('No injected wallet found. Install MetaMask, Rabby, or another EIP-1193 wallet.')
@@ -83,15 +97,39 @@ export async function connectWallet() {
   const address = accounts[0]
   if (!address) throw new Error('Wallet did not expose an account.')
   await ensureStudioNet(provider)
+  markWalletConnected()
   return { address, client: createInjectedWalletClient(provider, address) }
 }
 
 export async function getAuthorizedWalletSnapshot() {
   const provider = window.ethereum
-  if (!provider) return { address: '', chainId: '' }
+  if (!provider || wasWalletLocallyDisconnected()) return { address: '', chainId: '' }
   const accounts = parseAccounts(await provider.request({ method: 'eth_accounts' }))
   const chainId = normalizeChainId(await provider.request({ method: 'eth_chainId' }))
   return { address: accounts[0] || '', chainId }
+}
+
+export async function disconnectInjectedWallet() {
+  const provider = window.ethereum
+  markWalletDisconnected()
+  if (!provider) return
+  try {
+    await provider.request({
+      method: 'wallet_revokePermissions',
+      params: [{ eth_accounts: {} }],
+    })
+  } catch {
+    // EIP-1193 has no universal disconnect method. Clausem's local session
+    // remains disconnected across reloads even when the provider cannot revoke.
+  }
+}
+
+export async function hydrateAuthorizedWallet() {
+  const provider = window.ethereum
+  if (!provider || wasWalletLocallyDisconnected()) return { address: '', chainId: '', client: null as WalletClient | null }
+  const snapshot = await getAuthorizedWalletSnapshot()
+  if (!snapshot.address) return { ...snapshot, client: null as WalletClient | null }
+  return { ...snapshot, client: createInjectedWalletClient(provider, snapshot.address) }
 }
 
 export async function readContract<T>(functionName: string, args: unknown[] = []): Promise<T> {
