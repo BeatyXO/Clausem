@@ -19,3 +19,10 @@ Contract address: **PENDING REAL STUDIONET DEPLOYMENT**
 Explorer: **PENDING REAL STUDIONET DEPLOYMENT**
 
 Frontend: **PENDING PRODUCTION DEPLOYMENT**
+
+
+## Build verification
+
+Canonical GitHub Actions run `36279487572` passed Python compilation, preflight **16/16**, GenVM lint, Direct Mode **17/17**, frontend dependency install, TypeScript and production build.
+
+The remaining PENDING fields below require a real authenticated StudioNet/Vercel deployment and must not be replaced with guessed values.
