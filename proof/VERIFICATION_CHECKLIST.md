@@ -34,10 +34,10 @@
 
 Evidence: [STUDIONET_EVIDENCE.md](STUDIONET_EVIDENCE.md) and [STUDIONET_EVIDENCE.json](STUDIONET_EVIDENCE.json).
 
-## Vercel production and browser verification
+## Production build and Vercel browser verification
 
-- [ ] Set Production `VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888`
-- [ ] Set Production `VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com`
+- [x] Production build wired to canonical address and explorer through `frontend/.env.production`
+- [ ] Set the same `VITE_CONTRACT_ADDRESS` and `VITE_EXPLORER_BASE` values in Vercel Production settings
 - [ ] Deploy frontend to Vercel and record its production URL
 - [ ] Manually verify injected wallet reload hydration, wallet menu, copy, explorer, disconnect persistence, explicit reconnect, account/network changes and StudioNet switching
 - [ ] Verify live counts, registration, evaluation, finalized state and explorer links in the deployed app

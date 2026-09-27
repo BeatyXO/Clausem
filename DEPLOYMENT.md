@@ -22,7 +22,7 @@ See [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) for all registrat
 
 ## Vercel frontend
 
-Set these variables in Vercel's **Production** environment, then deploy the `frontend` Vite project using the repository's root `vercel.json` configuration:
+The tracked `frontend/.env.production` already supplies these public build values. Set them in Vercel's **Production** environment as well, then deploy the `frontend` Vite project using the repository's root `vercel.json` configuration:
 
 ```text
 VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888

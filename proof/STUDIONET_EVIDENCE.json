@@ -103,6 +103,8 @@
   },
   "frontend": {
     "vercel_url": null,
+    "production_config_file": "frontend/.env.production",
+    "canonical_address_embedded_in_production_assets": true,
     "contract_env_name": "VITE_CONTRACT_ADDRESS",
     "explorer_env_name": "VITE_EXPLORER_BASE",
     "explorer_env_value": "https://explorer-studio.genlayer.com",

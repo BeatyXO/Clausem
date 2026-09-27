@@ -35,7 +35,7 @@ Canonical GitHub Actions run `36279487572` passed Python compilation, preflight 
 
 ## Frontend handoff
 
-Set these Vercel Production variables before deployment:
+The same values are checked in as the public Vite production config at `frontend/.env.production`; set them in Vercel Production too before deployment:
 
 ```text
 VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888

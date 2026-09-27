@@ -24,6 +24,7 @@ Direct Mode stays pinned to `genlayer-test==0.29.2` and GenVM bundle `v0.2.16`, 
 - Frontend `npm ci`: **PASS**
 - Frontend TypeScript typecheck: **PASS**
 - Frontend production build: **PASS** (Vite reports the existing large-chunk advisory)
+- Production build embeds canonical contract address from `frontend/.env.production`; the preview configuration is not used by the build.
 - GenVM lint checks: **3/3 PASS**
 - GenVM SDK validation: **BLOCKED by local cache** — this Windows environment could not load the pinned SDK archive `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6`. Historical CI validation remains green.
 
@@ -44,7 +45,7 @@ Complete transaction IDs, source hashes, statuses and category vectors are in [p
 
 ## Frontend handoff
 
-Use these Vercel Production environment variables:
+The repository's `frontend/.env.production` already wires the canonical contract into the build. Set the same values in Vercel's Production environment as deployment configuration:
 
 ```text
 VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888
