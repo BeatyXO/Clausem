@@ -550,6 +550,7 @@ function App() {
               </div>
               <label>Immutable source A<input value={form.sourceA} onChange={e => setForm({ ...form, sourceA: e.target.value })} placeholder="https://raw.githubusercontent.com/.../<40-hex-commit>/terms-en.txt" required /></label>
               <label>Immutable source B<input value={form.sourceB} onChange={e => setForm({ ...form, sourceB: e.target.value })} placeholder="https://arweave.net/<transaction-id>" required /></label>
+              <p className="source-limit-note"><CircleAlert size={14} /> Current evaluation limit: each source must be no more than 18,000 decoded characters and 240 KB. Oversized sources are rejected instead of silently truncated.</p>
               <fieldset>
                 <legend>Material categories <span>{form.categories.length} selected</span></legend>
                 <div className="category-grid">
