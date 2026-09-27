@@ -121,6 +121,8 @@ main { position: relative; z-index: 1; }
 .form-card label span, fieldset legend span { color: #9f87b1; margin-left: 6px; font-size: 10px; }
 .form-card input, .lookup-box input { width: 100%; color: #fff; border: 1px solid rgba(208,147,255,.21); background: rgba(18,5,31,.65); border-radius: 12px; min-height: 43px; padding: 0 12px; outline: none; }
 .form-card input:focus, .lookup-box input:focus { border-color: rgba(189,112,255,.62); box-shadow: 0 0 0 3px rgba(149,63,227,.1); }
+.source-limit-note { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0 0; padding: 10px 12px; border: 1px solid rgba(216,168,255,.16); border-radius: 11px; background: rgba(49,13,80,.34); color: #bda7cb; font-size: 10px; line-height: 1.55; }
+.source-limit-note svg { flex: 0 0 auto; margin-top: 1px; color: var(--purple-2); }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 fieldset { margin: 22px 0; border: 0; padding: 0; }
 fieldset legend { padding: 0; font-size: 12px; margin-bottom: 10px; }
