@@ -1,0 +1,111 @@
+{
+  "network": {
+    "name": "GenLayer StudioNet",
+    "chain_id": 61999,
+    "rpc": "https://studio.genlayer.com/api",
+    "explorer_base": "https://explorer-studio.genlayer.com"
+  },
+  "deployment": {
+    "contract_address": "0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888",
+    "explorer_url": "https://explorer-studio.genlayer.com/address/0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888",
+    "transaction_hash": "0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746",
+    "transaction_url": "https://explorer-studio.genlayer.com/tx/0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746",
+    "status": "FINALIZED",
+    "execution_result": "SUCCESS",
+    "consensus_result": "MAJORITY_AGREE",
+    "agree_votes": 5,
+    "revealed_votes": 5,
+    "source_commit_sha": "ed5820b2eed764eabf5c56a57db0d582e3e8582d",
+    "source_file": "contracts/clausem.py",
+    "source_sha256": "72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487",
+    "source_git_blob_sha": "3e9d7654ee32259a97aa6cc2e2c4fb2dadb82f7e"
+  },
+  "fixtures": {
+    "initial_commit_sha": "d05e14741e29c5934e06a1146e605dd19727d60d",
+    "fee_only_commit_sha": "437aa8aa6a55a6bfb9458bb0d4a182fd63dcf635",
+    "termination_commit_sha": "8a1e9903db7f5cdbeb72eaf2e2996a5428b9dde8"
+  },
+  "parity": {
+    "pair_id": 1,
+    "pair_hash": "c399a7321005d9bd886b370ab2b94bbfc8ffe47c6fa5698fe2ceb515b900a632",
+    "registration_tx": "0x7f502a5138e2cb248d84cc87801f2a0b3a8a13588887868bced60134b88d8502",
+    "evaluation_id": 1,
+    "evaluation_hash": "d245ef6d782bae2eee1f52c67731b7afd5373975140b2b8f43b2aeeef1cf8139",
+    "evaluation_tx": "0xaf43f34949b6b7ccbfc804c795b1df752a89bae747fbc92a3289c6562af97110",
+    "final_status": "FINALIZED",
+    "overall": "PARITY",
+    "categories": ["FEES", "TERMINATION", "PRIVACY_DATA"],
+    "category_statuses": ["EQUIVALENT", "EQUIVALENT", "EQUIVALENT"],
+    "source_hash_a": "d99207b53be3945f58dd4b5ea155af8175586cef345e91e034ef4e0c4d45309a",
+    "source_hash_b": "701a114a951c6988ad2fdc9e67bee9ef0b8cbc004b6fe91d96eccdf363b5dabe",
+    "source_size_a": 238,
+    "source_size_b": 306,
+    "is_parity_correct_hashes": true,
+    "is_parity_wrong_pair_hash": false,
+    "is_parity_wrong_evaluation_hash": false
+  },
+  "material_drift": {
+    "pair_id": 4,
+    "pair_hash": "d3eb1a5c8c5e9d14291c1c691c9284457ecdfaa49a80180d003167535220f7a6",
+    "registration_tx": "0xca044381d74e7105b1e666a52cef42ae43e7d1bb53e75d7e08ff01faa1a32f94",
+    "evaluation_id": 3,
+    "evaluation_hash": "6b7070531c0d524f51d9c0d6b5d7399bce503c7f25395536f4303d76a1f7c111",
+    "evaluation_tx": "0x71b2491749a67dd5537692dfd1db1e4a4acf55f5295b8b8943c9cddd5d11c021",
+    "final_status": "FINALIZED",
+    "overall": "MATERIAL_DRIFT",
+    "categories": ["TERMINATION"],
+    "category_statuses": ["NARROWER_IN_B"],
+    "source_hash_a": "4e02440f4b9215225e691a1bb310f1e6e648d39142d1f75258a7b7515296fbcc",
+    "source_hash_b": "628401ce3d1e21cec1a2f34fa5e0a49843dd7bd34a93354e103191161ff61e90",
+    "source_size_a": 90,
+    "source_size_b": 197
+  },
+  "finality_and_successor": {
+    "reevaluation_attempt_tx": "0xb996c33cbfd9e696374bc517077f7d9259f4342646221c6a23790dc3698a2384",
+    "reevaluation_final_status": "FINALIZED",
+    "reevaluation_execution_result": "ERROR",
+    "reevaluation_consensus": "MAJORITY_AGREE",
+    "parent_pair_status_after_attempt": "EVALUATED",
+    "parent_evaluation_hash_after_attempt": "d245ef6d782bae2eee1f52c67731b7afd5373975140b2b8f43b2aeeef1cf8139",
+    "successor_pair_id": 5,
+    "successor_parent_pair_id": 1,
+    "successor_pair_hash": "b73296ec246702b3d35dcb74534f1bd9e1500c069e60ae31d1c5b22b3fc2c307",
+    "successor_registration_tx": "0x72b2f30159b3793ac1e13e6ea98dea72e4554af9fa878066471814f486452e67",
+    "successor_final_status": "FINALIZED",
+    "parent_hash_unchanged": true,
+    "parent_evaluation_unchanged": true,
+    "consumer_binding_after_successor": true
+  },
+  "other_live_attempts": [
+    {
+      "pair_id": 2,
+      "pair_hash": "f1c5af9fef11718bc537792a9385221e21b92d6e19052ac647855e964c04bedd",
+      "registration_tx": "0x46602159ae436d76a0fb510afb91c3cff24686050e3d6e2fd93e60e2647cca4f",
+      "evaluation_tx": "0xd3305b48823100937d2f33b04c624e2ce1d3234727ddcf5421f6ebe5db1a8e2e",
+      "final_status": "FINALIZED",
+      "overall": "AMBIGUOUS",
+      "category_statuses": ["AMBIGUOUS", "AMBIGUOUS", "AMBIGUOUS"],
+      "evaluation_hash": "b780110bae5bfe210262e5a12ec9bd53561f1fff3b953372d8e0e4d51e81f853"
+    },
+    {
+      "pair_id": 3,
+      "pair_hash": "e87eabd1f92513619be67edb41370ae921acd4d0a811107cdaeb17c388ef6f89",
+      "registration_tx": "0xca2eba8750a2149c8e52a55a2a004b574a11d46d90dd4a155b6daad01b04710d",
+      "evaluation_tx": "0xf2e4ef5385f1bfd34477d422b868fefb45055d5e4c19c906e1e1ea0581949f35",
+      "evaluation_final_status": "UNDETERMINED",
+      "pair_status_after_attempt": "REGISTERED",
+      "evaluation_hash": null
+    }
+  ],
+  "live_counts_after_all_calls": {
+    "pair_count": 5,
+    "evaluation_count": 3
+  },
+  "frontend": {
+    "vercel_url": null,
+    "contract_env_name": "VITE_CONTRACT_ADDRESS",
+    "explorer_env_name": "VITE_EXPLORER_BASE",
+    "explorer_env_value": "https://explorer-studio.genlayer.com",
+    "wallet_manual_verification": "NOT_RUN; production URL not deployed in this task"
+  }
+}

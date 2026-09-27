@@ -1,10 +1,10 @@
-# Clausem Build Status
+# Clausem Build and Deployment Status
 
-## Verified on canonical repository
+## Historical CI baseline
 
 Canonical repository: https://github.com/BeatyXO/Clausem
 
-The implementation/build phase is complete. GitHub Actions run `36279487572` passed on the wallet-polished `main` source:
+GitHub Actions run `36279487572` passed on the wallet-polished source:
 
 - Python compilation: **PASS**
 - Repository preflight: **16/16 PASS**
@@ -14,40 +14,41 @@ The implementation/build phase is complete. GitHub Actions run `36279487572` pas
 - TypeScript typecheck: **PASS**
 - Vite production build: **PASS**
 
-Direct Mode is intentionally pinned to `genlayer-test==0.29.2` and GenVM bundle `v0.2.16`, matching Clausem's pinned `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6` runtime.
+Direct Mode stays pinned to `genlayer-test==0.29.2` and GenVM bundle `v0.2.16`, matching the contract's pinned runtime.
 
-## Completed in repository
+## Current local verification
 
-- Production GenLayer Intelligent Contract: `contracts/clausem.py`.
-- Immutable source validation for commit-pinned GitHub raw, IPFS and Arweave.
-- Exact source hash + byte-size consensus checks.
-- Constrained 10-category semantic vector with fail-closed ambiguity.
-- Deterministic `PARITY / MATERIAL_DRIFT / AMBIGUOUS` reduction.
-- Single-shot finality and successor version lineage.
-- Typed `is_parity` consumer example.
-- `get_counts()` registry discovery view.
-- Adversarial Direct Mode suite.
-- Purple multi-shade React/Vite frontend using Comic Sans.
-- Direct injected-wallet GenLayer interaction; no authoritative backend.
-- Silent authorized-wallet hydration after reload.
-- Account/network/disconnect event reconciliation.
-- Connected-wallet menu with Copy address, explorer and Disconnect actions.
-- Local disconnect persistence so reload does not silently reconnect.
-- StudioNet add/switch helpers and finalized/pending transaction reconciliation.
-- Vercel configuration.
-- Architecture, invariants, threat model, reviewer demo, deployment guide and proof checklist.
-- Permanent GitHub Actions quality workflow.
+- Python compilation: **PASS**
+- Repository preflight: **16/16 PASS**
+- Direct Mode: **17/17 PASS**
+- Frontend `npm ci`: **PASS**
+- Frontend TypeScript typecheck: **PASS**
+- Frontend production build: **PASS** (Vite reports the existing large-chunk advisory)
+- GenVM lint checks: **3/3 PASS**
+- GenVM SDK validation: **BLOCKED by local cache** — this Windows environment could not load the pinned SDK archive `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6`. Historical CI validation remains green.
 
-## Remaining work for deployment agent
+## StudioNet deployment and live lifecycle evidence
 
-Only environment-dependent/live work remains:
+The exact deployed `contracts/clausem.py` matches canonical source commit `ed5820b2eed764eabf5c56a57db0d582e3e8582d`.
 
-1. Deploy the canonical `contracts/clausem.py` source to GenLayer StudioNet using an authenticated deployment wallet.
-2. Record the real contract address, deployment transaction, final source commit and source SHA-256.
-3. Execute real multi-validator `PARITY` and `MATERIAL_DRIFT` reviewer lifecycles.
-4. Prove single-shot finality, successor lineage and consumer hash pinning live.
-5. Set `VITE_CONTRACT_ADDRESS` to the canonical address.
-6. Deploy the frontend to Vercel from the final repository and manually verify wallet/register/evaluate/read behavior.
-7. Replace every PENDING deployment field with real evidence only.
+- Contract: [0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888](https://explorer-studio.genlayer.com/address/0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888)
+- Deployment transaction: [0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746](https://explorer-studio.genlayer.com/tx/0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746) — finalized, execution success, five validator agreements.
+- Deployed source SHA-256: `72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487`.
+- Pair 1 finalized as `PARITY`; evaluation hash `d245ef6d782bae2eee1f52c67731b7afd5373975140b2b8f43b2aeeef1cf8139`. Correct `is_parity` hashes return true; either wrong expected hash returns false.
+- Pair 4 finalized as `MATERIAL_DRIFT`; `TERMINATION = NARROWER_IN_B`; evaluation hash `6b7070531c0d524f51d9c0d6b5d7399bce503c7f25395536f4303d76a1f7c111`.
+- Re-evaluation of pair 1 finalized with leader execution `ERROR`; the pair and evaluation stayed unchanged.
+- Successor pair 5 references pair 1, has a new pair hash, and leaves the parent's finalized hashes and consumer binding unchanged.
+- Two other attempts are recorded transparently: pair 2 resolved to `AMBIGUOUS`; pair 3 evaluation resolved `UNDETERMINED` and remained registered.
 
-No contract address, transaction hash or live URL is fabricated in this repository.
+Complete transaction IDs, source hashes, statuses and category vectors are in [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) and [proof/STUDIONET_EVIDENCE.json](proof/STUDIONET_EVIDENCE.json).
+
+## Frontend handoff
+
+Use these Vercel Production environment variables:
+
+```text
+VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888
+VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
+```
+
+Vercel production deployment and manual injected-wallet/browser verification are still pending. The production URL is not recorded until the user deploys the frontend.
