@@ -1,0 +1,5 @@
+Service Rules
+
+Fees: The monthly service fee is USD 10.
+Termination: Either party may terminate this agreement with 30 days' written notice.
+Privacy and data: The service provider uses account data only to provide and secure the service.
