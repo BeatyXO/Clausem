@@ -1,164 +1,40 @@
-# Clausem — Deployment / Live-Proof Handoff
+# Clausem Deployment Handoff — Completed
 
-You are taking over an already-built and CI-verified GenLayer project named **Clausem**.
+The original deployment/live-proof handoff represented by this file is complete. It is retained only as provenance for the repository.
 
-Repository:
-https://github.com/BeatyXO/Clausem.git
+## Canonical status
 
-Do not redesign the product, replace the frontend, introduce a backend, or return only a plan/checklist. Inspect the current `main` branch, preserve the existing architecture, then complete the remaining **environment-dependent deployment and live-proof work** in place and push the final evidence/docs to `main`.
+- Repository: https://github.com/BeatyXO/Clausem
+- Production frontend: https://clausem.vercel.app/
+- StudioNet contract: `0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888`
+- Deployment tx: `0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746`
+- Deployed contract source commit: `ed5820b2eed764eabf5c56a57db0d582e3e8582d`
+- Contract source SHA-256: `72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487`
+- Live PARITY, MATERIAL_DRIFT, finality and successor evidence: [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md)
+- Machine-readable evidence: [proof/STUDIONET_EVIDENCE.json](proof/STUDIONET_EVIDENCE.json)
+- Verified code run: [36337680057](https://github.com/BeatyXO/Clausem/actions/runs/36337680057) on `f5134df0ea63ec46a9db09fe69847708ada890d6`
 
-## Already completed — do not redo as speculative rewrites
+No active deployment-agent task remains.
 
-The canonical repository already has:
+## Preserve these invariants
 
-- production contract `contracts/clausem.py`;
-- typed consumer example;
-- immutable commit-pinned GitHub/IPFS/Arweave source validation;
-- exact source hash + source-size validator binding;
-- constrained category semantic vector;
-- deterministic `PARITY / MATERIAL_DRIFT / AMBIGUOUS`;
-- single-shot evaluation and successor lineage;
-- React/Vite direct-to-GenLayer frontend;
-- purple multi-shade styling + Comic Sans;
-- injected wallet StudioNet add/switch;
-- silent wallet hydration after reload;
-- account/network/disconnect reconciliation;
-- connected-wallet dropdown with Copy address, explorer and Disconnect;
-- local disconnect persistence;
-- permanent GitHub quality workflow.
+Any future change must continue to preserve:
 
-Verified GitHub Actions run: `36279487572`
+1. immutable source admissibility;
+2. exact source-hash and source-size validator binding;
+3. constrained semantic vectors;
+4. fail-closed `AMBIGUOUS` handling;
+5. deterministic overall result;
+6. single-shot evaluation;
+7. immutable parent/successor lineage;
+8. pair-hash + evaluation-hash consumer binding;
+9. no fabricated deployment evidence.
 
-That run passed:
-- Python compilation;
-- preflight 16/16;
-- GenVM lint;
-- Direct Mode 17/17;
-- frontend install;
-- frontend TypeScript;
-- frontend production build.
+## Known limits of the canonical instance
 
-Direct Mode is pinned to `genlayer-test==0.29.2` with `sdk_version="v0.2.16"`, matching the contract's pinned runtime. Do not casually upgrade the runner just because a newer one exists.
+- 240,000-byte source limit;
+- 18,000 decoded-character source limit;
+- global `MAX_PAIRS = 1024`;
+- permissionless registration creates a registry-exhaustion availability risk.
 
-## Product boundary
-
-Clausem verifies whether two immutable language/version policy documents preserve the same material meaning. It is not a grant, escrow, milestone, reward, bounty, challenge-bond or token protocol.
-
-Do not add grants, funder/grantee roles, payouts, tranches, token custody, challenge bonds or generic AI-judge features.
-
-## Invariants that must remain intact
-
-1. Accepted sources stay immutable forms only.
-2. Leader/validator consensus stays bound to exact source hashes, source sizes and category-status vector.
-3. No leader-only field may influence persisted outcome.
-4. Malformed semantic output fails closed to AMBIGUOUS.
-5. Overall result remains deterministic.
-6. Evaluation remains single-shot.
-7. Successor creation never mutates/invalidate the parent.
-8. `is_parity` requires both expected pair hash and expected evaluation hash.
-9. Never fabricate deployment evidence.
-
-## Your remaining work
-
-### 1. Confirm exact source before deployment
-
-Pull current `main`.
-
-Run a quick confirmation:
-```bash
-python -m py_compile contracts/clausem.py contracts/clausem_consumer.py tests/test_clausem.py tests/conftest.py
-python scripts/preflight.py
-pip install -r requirements-test.txt
-genvm-lint check contracts/clausem.py
-pytest -q
-cd frontend
-npm ci --no-audit --no-fund
-npm run typecheck
-npm run build
-```
-
-If these differ from the already-green CI, diagnose the environment before changing architecture.
-
-### 2. Canonical StudioNet deployment
-
-Deploy the exact current `contracts/clausem.py` to GenLayer StudioNet (chain 61999) using the authenticated wallet/CLI available to you.
-
-Record real evidence:
-- contract address;
-- deployment tx;
-- finalized/execution status;
-- exact deployed source commit SHA;
-- SHA-256 of deployed `contracts/clausem.py`.
-
-Do not proceed with invented placeholders.
-
-### 3. Real multi-validator reviewer proof
-
-Use immutable public source documents accessible to StudioNet validators.
-
-Create and finalize at least:
-
-**A. PARITY pair**
-- register pair;
-- evaluate;
-- read pair/evaluation;
-- record pair ID, pair hash, evaluation hash and tx hashes;
-- show `is_parity(correct hashes) == true`;
-- show a wrong expected pair/evaluation hash returns false.
-
-**B. MATERIAL_DRIFT pair**
-- use a second immutable pair with one obvious material difference;
-- evaluate;
-- record the relevant category state and overall `MATERIAL_DRIFT`;
-- retain transaction evidence.
-
-**C. Finality/version lineage**
-- prove re-evaluating the finalized pair reverts;
-- register a successor;
-- prove the parent remains unchanged/final;
-- prove the successor has a new pair hash and correct parent pointer.
-
-Persist concise machine-readable evidence under `proof/` or `docs/`.
-
-### 4. Production frontend
-
-Set:
-```text
-VITE_CONTRACT_ADDRESS=<canonical StudioNet contract>
-VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
-```
-
-Build fresh and deploy to Vercel using the authenticated project/account available to you.
-
-Manually verify in browser:
-- existing authorized injected wallet hydrates after reload without a fresh connect prompt;
-- clicking the connected wallet opens Copy address / View on explorer / Disconnect;
-- Disconnect clears Clausem session and stays disconnected after reload until Connect is explicitly clicked;
-- account/network changes reconcile cleanly;
-- StudioNet switching works;
-- live counts load;
-- register/evaluate/read works against canonical address;
-- transaction pending vs finalized state is accurate;
-- explorer links point to real address/transactions;
-- preview-mode warning is absent in production.
-
-### 5. Final evidence/docs
-
-Update `BUILD_STATUS.md`, `DEPLOYMENT.md`, `SUBMISSION.md` and `proof/VERIFICATION_CHECKLIST.md` with real values only.
-
-Push all completed work to `main`.
-
-## Final response
-
-Report:
-1. final Git commit SHA;
-2. contract address + explorer link;
-3. deployment tx;
-4. source SHA-256;
-5. real PARITY and MATERIAL_DRIFT pair IDs/hashes/txs;
-6. finality/successor proof;
-7. Vercel URL;
-8. final CI/test results;
-9. any genuinely unresolved blocker.
-
-Do not claim a live result unless you actually observed it.
+Do not modify and redeploy the canonical contract merely to make documentation cleaner. A future production-scale successor can address the registry bound with a new deployment and new evidence.

@@ -1,6 +1,6 @@
 # StudioNet Evidence
 
-All values below were read from GenLayer StudioNet (chain 61999). Transaction links open the corresponding explorer record.
+All values below were read from GenLayer StudioNet (chain 61999).
 
 ## Canonical deployment
 
@@ -25,27 +25,41 @@ All values below were read from GenLayer StudioNet (chain 61999). Transaction li
 - Register: [0xca044381d74e7105b1e666a52cef42ae43e7d1bb53e75d7e08ff01faa1a32f94](https://explorer-studio.genlayer.com/tx/0xca044381d74e7105b1e666a52cef42ae43e7d1bb53e75d7e08ff01faa1a32f94), finalized.
 - Evaluate: [0x71b2491749a67dd5537692dfd1db1e4a4acf55f5295b8b8943c9cddd5d11c021](https://explorer-studio.genlayer.com/tx/0x71b2491749a67dd5537692dfd1db1e4a4acf55f5295b8b8943c9cddd5d11c021), finalized.
 - Evaluation 3 hash: `6b7070531c0d524f51d9c0d6b5d7399bce503c7f25395536f4303d76a1f7c111`.
-- Result: `MATERIAL_DRIFT`; `TERMINATION` is `NARROWER_IN_B` (A permits cancellation with 30 days' notice; B requires 90 days).
+- Result: `MATERIAL_DRIFT`; `TERMINATION = NARROWER_IN_B` (A permits cancellation with 30 days' notice; B requires 90 days).
 
 ## Finality and successor
 
 - Re-evaluation of finalized pair 1: [0xb996c33cbfd9e696374bc517077f7d9259f4342646221c6a23790dc3698a2384](https://explorer-studio.genlayer.com/tx/0xb996c33cbfd9e696374bc517077f7d9259f4342646221c6a23790dc3698a2384) finalized with leader execution `ERROR` and unanimous validator agreement. Pair 1 remained `EVALUATED` and its evaluation hash stayed unchanged.
-- Successor pair 5 registered by the parent creator: [0x72b2f30159b3793ac1e13e6ea98dea72e4554af9fa878066471814f486452e67](https://explorer-studio.genlayer.com/tx/0x72b2f30159b3793ac1e13e6ea98dea72e4554af9fa878066471814f486452e67), finalized.
-- Successor parent pointer: pair 1. New pair hash: `b73296ec246702b3d35dcb74534f1bd9e1500c069e60ae31d1c5b22b3fc2c307`.
-- Parent pair hash and evaluation hash remained unchanged after successor creation; `is_parity` for pair 1 still returned `true`.
+- Successor pair 5: [0x72b2f30159b3793ac1e13e6ea98dea72e4554af9fa878066471814f486452e67](https://explorer-studio.genlayer.com/tx/0x72b2f30159b3793ac1e13e6ea98dea72e4554af9fa878066471814f486452e67), finalized.
+- Successor parent pointer: pair 1.
+- Successor pair hash: `b73296ec246702b3d35dcb74534f1bd9e1500c069e60ae31d1c5b22b3fc2c307`.
+- Parent pair hash and evaluation hash remained unchanged; `is_parity` for pair 1 still returned `true`.
 
-## Other finalized attempts
+## Other observed attempts
 
-- Pair 2 finalized as `AMBIGUOUS`; all three category statuses were `AMBIGUOUS`. It is retained here as an observed non-approval result, not counted as the drift proof.
-- Pair 3 evaluation finalized `UNDETERMINED`; pair 3 remained `REGISTERED` with no evaluation hash. It is not counted as a completed lifecycle.
+- Pair 2 finalized as `AMBIGUOUS`; all three category statuses were `AMBIGUOUS`.
+- Pair 3 evaluation finalized `UNDETERMINED`; pair 3 remained `REGISTERED` with no evaluation hash.
 
-## Frontend handoff
+These are retained as observed results, not misrepresented as successful drift/parity proof.
 
-Set these Vercel Production environment variables, then redeploy:
+## Production frontend
 
-```text
-VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888
-VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
-```
+- URL: https://clausem.vercel.app/
+- Production contract: `0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888`
+- Explorer base: `https://explorer-studio.genlayer.com`
+- Production config file: `frontend/.env.production`
 
-The frontend has not yet been deployed to Vercel in this task, so there is no production URL or manual wallet verification result recorded here.
+The injected-wallet flow is implemented and the production build is green. Browser-only wallet interaction is an operator check rather than CI evidence.
+
+## Code verification
+
+GitHub Actions run [36337680057](https://github.com/BeatyXO/Clausem/actions/runs/36337680057) on `f5134df0ea63ec46a9db09fe69847708ada890d6` passed compilation, preflight **16/16**, GenVM lint/validation, Direct Mode **17/17**, frontend install, typecheck and build.
+
+## Known limits
+
+- max source bytes: 240,000;
+- max decoded source characters: 18,000;
+- max global pairs: 1,024;
+- registration is permissionless.
+
+The 1,024-pair cap creates a bounded-instance registry exhaustion risk. It does not affect immutability or validity of already-finalized records.

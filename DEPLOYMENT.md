@@ -10,6 +10,8 @@ Network: **GenLayer StudioNet** — chain ID `61999`.
 - Deployed source commit: `ed5820b2eed764eabf5c56a57db0d582e3e8582d`.
 - SHA-256 of deployed `contracts/clausem.py`: `72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487`.
 
+The deployed contract source has not changed after deployment.
+
 ## Live lifecycle evidence
 
 - **PARITY:** pair 1; pair hash `c399a7321005d9bd886b370ab2b94bbfc8ffe47c6fa5698fe2ceb515b900a632`; evaluation hash `d245ef6d782bae2eee1f52c67731b7afd5373975140b2b8f43b2aeeef1cf8139`; register tx `0x7f502a5138e2cb248d84cc87801f2a0b3a8a13588887868bced60134b88d8502`; evaluate tx `0xaf43f34949b6b7ccbfc804c795b1df752a89bae747fbc92a3289c6562af97110`.
@@ -18,19 +20,41 @@ Network: **GenLayer StudioNet** — chain ID `61999`.
 - Re-evaluating finalized pair 1 finalized with execution `ERROR`; pair 1 and its evaluation hash remained unchanged.
 - Successor pair 5 points to pair 1, has a distinct pair hash and did not change the parent or its consumer binding.
 
-See [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) for all registration/evaluation transaction IDs, source hashes, statuses and category vectors. The ambiguous and undetermined attempts are also retained there.
+See [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) for complete transaction evidence.
 
-## Vercel frontend
+## Production frontend
 
-The tracked `frontend/.env.production` already supplies these public build values. Set them in Vercel's **Production** environment as well, then deploy the `frontend` Vite project using the repository's root `vercel.json` configuration:
+Production URL:
+
+https://clausem.vercel.app/
+
+Production build values:
 
 ```text
 VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888
 VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
 ```
 
-After deployment, manually check the injected-wallet reload/menu/disconnect flow, account/network changes, StudioNet switching, live counts, pair registration/evaluation and explorer links. The Vercel URL and manual browser results are pending the user's deployment; no URL or wallet result is claimed here.
+The same public values are tracked in `frontend/.env.production`.
 
-## Build baseline
+## Latest verification
 
-Historical CI run `36279487572` passed compilation, preflight **16/16**, GenVM lint/validation, Direct Mode **17/17**, frontend install, typecheck and build. Direct Mode remains pinned to `genlayer-test==0.29.2` and `sdk_version="v0.2.16"`.
+GitHub Actions run [36337680057](https://github.com/BeatyXO/Clausem/actions/runs/36337680057) on commit `f5134df0ea63ec46a9db09fe69847708ada890d6` passed:
+
+- compilation;
+- preflight **16/16**;
+- GenVM lint/validation;
+- Direct Mode **17/17**;
+- frontend install;
+- TypeScript;
+- production build.
+
+## Operational limits
+
+Current canonical contract limits:
+
+- `MAX_SOURCE_BYTES = 240000`;
+- `MAX_SOURCE_CHARS = 18000`;
+- `MAX_PAIRS = 1024`.
+
+Oversized sources fail before semantic evaluation. The global 1,024-pair registry is a known bounded-instance availability limit: permissionless registration means a determined actor could consume the remaining slots. Existing finalized records remain immutable and unaffected.

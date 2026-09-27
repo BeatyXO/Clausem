@@ -34,8 +34,16 @@
     "evaluation_tx": "0xaf43f34949b6b7ccbfc804c795b1df752a89bae747fbc92a3289c6562af97110",
     "final_status": "FINALIZED",
     "overall": "PARITY",
-    "categories": ["FEES", "TERMINATION", "PRIVACY_DATA"],
-    "category_statuses": ["EQUIVALENT", "EQUIVALENT", "EQUIVALENT"],
+    "categories": [
+      "FEES",
+      "TERMINATION",
+      "PRIVACY_DATA"
+    ],
+    "category_statuses": [
+      "EQUIVALENT",
+      "EQUIVALENT",
+      "EQUIVALENT"
+    ],
     "source_hash_a": "d99207b53be3945f58dd4b5ea155af8175586cef345e91e034ef4e0c4d45309a",
     "source_hash_b": "701a114a951c6988ad2fdc9e67bee9ef0b8cbc004b6fe91d96eccdf363b5dabe",
     "source_size_a": 238,
@@ -53,8 +61,12 @@
     "evaluation_tx": "0x71b2491749a67dd5537692dfd1db1e4a4acf55f5295b8b8943c9cddd5d11c021",
     "final_status": "FINALIZED",
     "overall": "MATERIAL_DRIFT",
-    "categories": ["TERMINATION"],
-    "category_statuses": ["NARROWER_IN_B"],
+    "categories": [
+      "TERMINATION"
+    ],
+    "category_statuses": [
+      "NARROWER_IN_B"
+    ],
     "source_hash_a": "4e02440f4b9215225e691a1bb310f1e6e648d39142d1f75258a7b7515296fbcc",
     "source_hash_b": "628401ce3d1e21cec1a2f34fa5e0a49843dd7bd34a93354e103191161ff61e90",
     "source_size_a": 90,
@@ -84,7 +96,11 @@
       "evaluation_tx": "0xd3305b48823100937d2f33b04c624e2ce1d3234727ddcf5421f6ebe5db1a8e2e",
       "final_status": "FINALIZED",
       "overall": "AMBIGUOUS",
-      "category_statuses": ["AMBIGUOUS", "AMBIGUOUS", "AMBIGUOUS"],
+      "category_statuses": [
+        "AMBIGUOUS",
+        "AMBIGUOUS",
+        "AMBIGUOUS"
+      ],
       "evaluation_hash": "b780110bae5bfe210262e5a12ec9bd53561f1fff3b953372d8e0e4d51e81f853"
     },
     {
@@ -102,12 +118,33 @@
     "evaluation_count": 3
   },
   "frontend": {
-    "vercel_url": null,
+    "vercel_url": "https://clausem.vercel.app/",
     "production_config_file": "frontend/.env.production",
     "canonical_address_embedded_in_production_assets": true,
     "contract_env_name": "VITE_CONTRACT_ADDRESS",
     "explorer_env_name": "VITE_EXPLORER_BASE",
     "explorer_env_value": "https://explorer-studio.genlayer.com",
-    "wallet_manual_verification": "NOT_RUN; production URL not deployed in this task"
+    "wallet_manual_verification": "BROWSER_OPERATOR_CHECK; not mechanically attested by GitHub CI",
+    "deployment_status": "DEPLOYED"
+  },
+  "code_verification": {
+    "github_actions_run_id": 36337680057,
+    "commit_sha": "f5134df0ea63ec46a9db09fe69847708ada890d6",
+    "status": "SUCCESS",
+    "python_compile": "PASS",
+    "preflight": "16/16 PASS",
+    "genvm_lint": "PASS",
+    "direct_mode": "17/17 PASS",
+    "frontend_install": "PASS",
+    "frontend_typecheck": "PASS",
+    "frontend_build": "PASS"
+  },
+  "known_limits": {
+    "max_pairs_global": 1024,
+    "registry_permissionless": true,
+    "registry_exhaustion_risk": "A determined actor could consume remaining pair slots and prevent new registrations on this bounded deployment. Existing finalized records and proofs remain unchanged.",
+    "max_source_bytes": 240000,
+    "max_source_decoded_characters": 18000,
+    "oversized_source_behavior": "REJECTED; never silently truncated"
   }
 }

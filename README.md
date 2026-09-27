@@ -4,6 +4,13 @@
 
 Clausem is a GenLayer application and reusable Intelligent Contract primitive for answering a narrow but difficult question: when the same policy, terms, or agreement is published in two language/version documents, do the two texts preserve the same **material meaning**?
 
+## Live deployment
+
+- Frontend: https://clausem.vercel.app/
+- StudioNet contract: [0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888](https://explorer-studio.genlayer.com/address/0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888)
+- Deployment transaction: [0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746](https://explorer-studio.genlayer.com/tx/0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746)
+- Full live proof: [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md)
+
 It does not ask one centralized model to give a free-form translation score. The contract binds two immutable public sources, has GenLayer validators independently fetch the exact bytes, requires consensus on both source hashes **and** a constrained semantic comparison vector, and then derives the final state deterministically.
 
 Possible final states:
@@ -15,8 +22,6 @@ Possible final states:
 ## Product shape
 
 Clausem is deliberately different from milestone/grant/escrow projects. There are no grants, funder/grantee roles, tranches, challenge bonds, payout math, milestone claims, or token custody.
-
-The core lifecycle is:
 
 ```text
 REGISTER IMMUTABLE PAIR
@@ -53,11 +58,11 @@ REGISTER A SUCCESSOR PAIR — never mutate/re-adjudicate the old one
 9. Dispute
 10. Exceptions
 
-Per-category statuses are constrained to:
+Per-category statuses:
 
 `EQUIVALENT`, `NARROWER_IN_B`, `BROADER_IN_B`, `CONFLICT`, `MISSING_IN_A`, `MISSING_IN_B`, `NOT_APPLICABLE`, `AMBIGUOUS`.
 
-Malformed semantic output fails closed to `AMBIGUOUS` rather than manufacturing a decisive result.
+Malformed semantic output fails closed to `AMBIGUOUS`.
 
 ## Immutable source policy
 
@@ -68,97 +73,42 @@ Clausem accepts only:
 - `gateway.pinata.cloud/ipfs/<CID>`
 - `arweave.net/<transaction-id>`
 
-Ordinary mutable websites and GitHub branch URLs are rejected at registration. During evaluation, leader and validators independently fetch both sources and must agree on the complete byte hashes and sizes. The stored `source_hash_a` / `source_hash_b` therefore represent bytes validators actually evaluated, not just a URL label.
+Mutable websites and GitHub branch URLs are rejected. Leader and validators independently fetch the sources and must agree on full byte hashes and byte sizes.
+
+Current source limits:
+
+- maximum 240,000 bytes per source;
+- maximum 18,000 decoded characters per source;
+- oversized sources are rejected, never silently truncated.
 
 ## Why GenLayer
 
-Plain contracts can compare hashes, but they cannot determine whether two differently worded documents preserve the same termination right or impose the same payment obligation. A single model API can make such a judgment, but then the API operator becomes a trusted semantic oracle.
-
-Clausem narrows GenLayer consensus to one bounded job:
+Plain contracts can compare hashes, but cannot determine whether differently worded documents preserve the same material right or obligation. Clausem narrows GenLayer consensus to one bounded job:
 
 1. independently fetch the two immutable sources;
 2. independently hash the exact fetched bytes;
 3. independently classify only the selected material categories;
-4. reject the leader when source identity or the category vector differs;
-5. deterministically derive the final `PARITY / MATERIAL_DRIFT / AMBIGUOUS` result.
+4. reject the leader when evidence identity or the category vector differs;
+5. deterministically derive `PARITY / MATERIAL_DRIFT / AMBIGUOUS`.
 
 ## Frontend
 
-The Vite/React frontend is intentionally direct-to-GenLayer. There is no authoritative backend or server-held writer key.
+The React/Vite frontend is direct-to-GenLayer. There is no authoritative backend or server-held writer key.
 
-- injected wallet connection (MetaMask, Rabby, compatible EIP-1193 wallet);
-- silent authorized-wallet hydration after reload without repeated connect prompts;
-- account/network/disconnect event reconciliation;
-- connected-wallet menu with copy address, explorer and disconnect actions;
-- local disconnect persistence so a reload does not silently reconnect;
-- automatic GenLayer StudioNet chain add/switch;
-- live `get_counts()` registry discovery;
-- recent pair dashboard;
-- pair/successor registration form;
+- injected wallet connection;
+- silent authorized-wallet hydration after reload;
+- account/network/disconnect reconciliation;
+- connected-wallet menu with copy address, explorer and disconnect;
+- local disconnect persistence;
+- StudioNet add/switch;
+- live registry counts;
+- pair/successor registration;
 - selectable material categories;
-- one-shot evaluation trigger;
-- pair + evaluation proof explorer;
-- exact source hashes, semantic hash, and evaluation hash display;
-- StudioNet transaction/explorer links;
-- preview mode when no canonical deployment address is configured;
+- one-shot evaluation;
+- proof explorer;
+- source/evaluation hashes and explorer links;
+- visible source-size limits;
 - purple multi-shade UI with Comic Sans typography.
-
-Preview mode is explicitly labeled and does **not** pretend the sample record exists onchain.
-
-## Repository layout
-
-```text
-contracts/clausem.py             production Intelligent Contract
-contracts/clausem_consumer.py    minimal typed downstream consumer
-frontend/                        Vite + React application
-frontend/src/lib/genlayer.ts     StudioNet wallet/read/write helpers
-tests/                           Direct Mode adversarial tests
-docs/ARCHITECTURE.md             system architecture + trust boundaries
-docs/INVARIANTS.md               reviewer-facing protocol invariants
-docs/THREAT_MODEL.md             adversary/failure analysis
-docs/REVIEWER_DEMO.md            recommended live demonstration
-DEPLOYMENT.md                     deployment and post-deploy gates
-proof/VERIFICATION_CHECKLIST.md   evidence checklist
-scripts/preflight.py              local static quality gate
-AGENT_PROMPT.md                   Codex finish/deploy instructions
-```
-
-## Local checks
-
-Static contract checks:
-
-```bash
-python -m py_compile contracts/clausem.py contracts/clausem_consumer.py
-python scripts/preflight.py
-```
-
-GenLayer Direct Mode (requires the GenLayer test tooling/runtime):
-
-```bash
-pip install -r requirements-test.txt
-pytest -q
-```
-
-Frontend:
-
-```bash
-cd frontend
-npm install --no-audit --no-fund
-npm run typecheck
-npm run build
-npm run dev
-```
-
-## Frontend configuration
-
-Create `frontend/.env.local`:
-
-```text
-VITE_CONTRACT_ADDRESS=0x...
-VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
-```
-
-The app stays in clearly labeled preview mode when `VITE_CONTRACT_ADDRESS` is absent. Live contract writes are disabled until a real deployed address is configured.
 
 ## Downstream composability
 
@@ -168,10 +118,25 @@ A downstream contract can pin a finalized result via:
 is_parity(pair_id, expected_pair_hash, expected_evaluation_hash)
 ```
 
-Both hashes must match the immutable registered/evaluated records. This prevents a consumer from silently following a successor version it did not explicitly approve.
+Both hashes must match. A successor cannot silently replace the exact result a consumer approved.
 
-## Scope and limitations
+## Verified build
 
-Clausem is not legal advice and does not declare which language should legally control. It does not guarantee general translation quality or factual truth. Its claim is deliberately narrower: for selected material categories, a GenLayer validator set reached consensus over **these exact immutable bytes**, producing **this exact hash-bound semantic result**.
+GitHub Actions run [36337680057](https://github.com/BeatyXO/Clausem/actions/runs/36337680057) passed on `f5134df0ea63ec46a9db09fe69847708ada890d6`:
 
-See `docs/THREAT_MODEL.md` for residual semantic-oracle risk and the explicit non-goals.
+- preflight **16/16**;
+- GenVM lint/validation;
+- Direct Mode **17/17**;
+- frontend install/typecheck/build.
+
+## Known bounded-instance limitation
+
+The canonical deployment has a global `MAX_PAIRS = 1024` bound and registration is permissionless. A determined actor could consume the remaining slots and prevent new registrations on this deployment. This is an availability/griefing limitation only; it cannot mutate or forge already-finalized records.
+
+A production-scale successor should remove/raise the cap or add anti-spam/quota/economic admission controls.
+
+## Scope
+
+Clausem is not legal advice, does not decide which language legally controls, does not certify general translation quality, does not prove source authorship, and does not custody assets or automate payouts.
+
+See [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) for residual risks and non-goals.

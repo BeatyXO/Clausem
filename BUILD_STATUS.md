@@ -1,10 +1,15 @@
 # Clausem Build and Deployment Status
 
-## Historical CI baseline
+Clausem is deployed, live and submission-ready.
 
-Canonical repository: https://github.com/BeatyXO/Clausem
+- Repository: https://github.com/BeatyXO/Clausem
+- Production frontend: https://clausem.vercel.app/
+- Canonical StudioNet contract: [0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888](https://explorer-studio.genlayer.com/address/0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888)
+- Deployment transaction: [0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746](https://explorer-studio.genlayer.com/tx/0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746)
 
-GitHub Actions run `36279487572` passed on the wallet-polished source:
+## Verified code baseline
+
+GitHub Actions run [36337680057](https://github.com/BeatyXO/Clausem/actions/runs/36337680057) passed against commit `f5134df0ea63ec46a9db09fe69847708ada890d6` after the final frontend source-limit notice was added.
 
 - Python compilation: **PASS**
 - Repository preflight: **16/16 PASS**
@@ -14,42 +19,48 @@ GitHub Actions run `36279487572` passed on the wallet-polished source:
 - TypeScript typecheck: **PASS**
 - Vite production build: **PASS**
 
-Direct Mode stays pinned to `genlayer-test==0.29.2` and GenVM bundle `v0.2.16`, matching the contract's pinned runtime.
+Direct Mode remains intentionally pinned to `genlayer-test==0.29.2` with GenVM bundle `v0.2.16`, matching the contract's pinned runtime.
 
-## Current local verification
+## Canonical deployed source
 
-- Python compilation: **PASS**
-- Repository preflight: **16/16 PASS**
-- Direct Mode: **17/17 PASS**
-- Frontend `npm ci`: **PASS**
-- Frontend TypeScript typecheck: **PASS**
-- Frontend production build: **PASS** (Vite reports the existing large-chunk advisory)
-- Production build embeds canonical contract address from `frontend/.env.production`; the preview configuration is not used by the build.
-- GenVM lint checks: **3/3 PASS**
-- GenVM SDK validation: **BLOCKED by local cache** — this Windows environment could not load the pinned SDK archive `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6`. Historical CI validation remains green.
+The deployed contract remains the exact `contracts/clausem.py` from source commit `ed5820b2eed764eabf5c56a57db0d582e3e8582d`.
 
-## StudioNet deployment and live lifecycle evidence
+- Source SHA-256: `72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487`
+- Deployment status: `FINALIZED`
+- Leader execution: `SUCCESS`
+- Validator agreement: five of five
 
-The exact deployed `contracts/clausem.py` matches canonical source commit `ed5820b2eed764eabf5c56a57db0d582e3e8582d`.
+Later repository commits only added proof fixtures, deployment evidence, frontend production wiring, source-limit UX, and documentation. The deployed contract source was not changed.
 
-- Contract: [0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888](https://explorer-studio.genlayer.com/address/0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888)
-- Deployment transaction: [0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746](https://explorer-studio.genlayer.com/tx/0x241ccae5a7e4c064e0bacc49a6ad02f20b4c8e11a954f890c3f9bacf5eea7746) — finalized, execution success, five validator agreements.
-- Deployed source SHA-256: `72e0a5fae85bccc2215b0ceccd4f6267d15d65f6fca065f3e6d67f9416eb4487`.
-- Pair 1 finalized as `PARITY`; evaluation hash `d245ef6d782bae2eee1f52c67731b7afd5373975140b2b8f43b2aeeef1cf8139`. Correct `is_parity` hashes return true; either wrong expected hash returns false.
-- Pair 4 finalized as `MATERIAL_DRIFT`; `TERMINATION = NARROWER_IN_B`; evaluation hash `6b7070531c0d524f51d9c0d6b5d7399bce503c7f25395536f4303d76a1f7c111`.
-- Re-evaluation of pair 1 finalized with leader execution `ERROR`; the pair and evaluation stayed unchanged.
-- Successor pair 5 references pair 1, has a new pair hash, and leaves the parent's finalized hashes and consumer binding unchanged.
-- Two other attempts are recorded transparently: pair 2 resolved to `AMBIGUOUS`; pair 3 evaluation resolved `UNDETERMINED` and remained registered.
+## Live lifecycle evidence
 
-Complete transaction IDs, source hashes, statuses and category vectors are in [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) and [proof/STUDIONET_EVIDENCE.json](proof/STUDIONET_EVIDENCE.json).
+- Pair 1 finalized as `PARITY`; correct pair/evaluation hashes return `true`, while wrong expected hashes return `false`.
+- Pair 4 finalized as `MATERIAL_DRIFT` with `TERMINATION = NARROWER_IN_B`.
+- Re-evaluation of finalized pair 1 finalized with execution `ERROR`; its state and evaluation hash stayed unchanged.
+- Successor pair 5 references pair 1, has a new pair hash, and does not invalidate the parent consumer binding.
+- Pair 2 is retained as a real `AMBIGUOUS` result.
+- Pair 3 is retained as a real `UNDETERMINED` evaluation attempt rather than being misrepresented as successful proof.
 
-## Frontend handoff
+Full evidence is in [proof/STUDIONET_EVIDENCE.md](proof/STUDIONET_EVIDENCE.md) and [proof/STUDIONET_EVIDENCE.json](proof/STUDIONET_EVIDENCE.json).
 
-The repository's `frontend/.env.production` already wires the canonical contract into the build. Set the same values in Vercel's Production environment as deployment configuration:
+## Production frontend
 
-```text
-VITE_CONTRACT_ADDRESS=0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888
-VITE_EXPLORER_BASE=https://explorer-studio.genlayer.com
-```
+The production frontend is deployed at:
 
-Vercel production deployment and manual injected-wallet/browser verification are still pending. The production URL is not recorded until the user deploys the frontend.
+https://clausem.vercel.app/
+
+The repository production config points to the canonical StudioNet contract and explorer. Injected-wallet recovery, wallet menu, copy-address, explorer, disconnect persistence, explicit reconnect, account/network reconciliation and StudioNet switching are implemented in source and covered by the green production build.
+
+Browser-only injected-wallet interaction is an operator smoke test and is not something GitHub CI can mechanically attest.
+
+## Known bounded-instance limits
+
+The current deployed instance deliberately remains unchanged so its contract address and live proof stay canonical.
+
+- Each fetched source must be at most **240,000 bytes**.
+- Each decoded source must be at most **18,000 characters**.
+- Oversized sources are rejected rather than silently truncated.
+- The global registry has `MAX_PAIRS = 1024`.
+- Registration is permissionless, so a determined actor could consume remaining registry slots and block new registrations on this deployment.
+
+Registry exhaustion is an availability limitation, not a way to rewrite or forge existing finalized records. A future production-scale deployment should remove/raise the global cap or add an anti-spam/quota/economic admission mechanism.

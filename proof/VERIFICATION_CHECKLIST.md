@@ -1,45 +1,56 @@
 # Clausem Verification Checklist
 
-## Repository and historical CI
+## Contract and consensus
 
 - [x] Immutable source forms only; no branch URL or mutable website bypass
 - [x] Exact source hashes, byte sizes and constrained category vector bound by consensus
 - [x] Malformed semantic output fails closed to `AMBIGUOUS`
-- [x] Deterministic result, one successful evaluation per pair, immutable parent/successor lineage
+- [x] Deterministic result and single-shot evaluation
+- [x] Parent/successor lineage preserves historical consumer bindings
 - [x] `is_parity` checks both expected hashes
-- [x] Direct-to-GenLayer purple Comic Sans frontend with injected-wallet recovery and disconnect implementation
-- [x] CI run `36279487572`: compilation, preflight **16/16**, GenVM validation, Direct Mode **17/17**, frontend typecheck/build
+- [x] Real `PARITY` lifecycle finalized
+- [x] Real `MATERIAL_DRIFT` lifecycle finalized
+- [x] Re-evaluation failure proven live
+- [x] Successor lineage proven live
+- [x] Ambiguous and undetermined attempts retained transparently
 
-## Current local verification
+## Canonical deployment
 
+- [x] Contract deployed: `0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888`
+- [x] Deployment transaction finalized successfully
+- [x] Five validator agreements recorded
+- [x] Deployed source commit recorded
+- [x] Deployed source SHA-256 recorded
+- [x] Deployed contract source remains unchanged in the current repository
+
+## Code verification
+
+- [x] GitHub Actions run `36337680057` completed successfully on `f5134df0ea63ec46a9db09fe69847708ada890d6`
 - [x] Python compilation
 - [x] Repository preflight — **16/16**
+- [x] GenVM lint / validation
 - [x] GenLayer Direct Mode — **17/17**
-- [x] Frontend `npm ci`
+- [x] Frontend dependency install
 - [x] Frontend TypeScript typecheck
 - [x] Frontend production build
-- [ ] Local GenVM SDK validation — linter checks pass, but pinned SDK archive could not be loaded from the Windows cache; historical CI validation passed
 
-## StudioNet (chain 61999)
+## Production frontend
 
-- [x] Canonical contract deployed: `0xAE3eE6c94916Fc7E47d0C2e94059f18273AF2888`
-- [x] Deployment transaction finalized with execution success and five validator agreements
-- [x] Deployment source commit and SHA-256 recorded
-- [x] Real `PARITY` lifecycle finalized; pair/evaluation hashes recorded
-- [x] Correct `is_parity` result true; wrong expected pair/evaluation hashes false
-- [x] Real `MATERIAL_DRIFT` lifecycle finalized with `TERMINATION = NARROWER_IN_B`
-- [x] Re-evaluation attempt failed at execution after finality; parent state unchanged
-- [x] Successor points to parent, has new pair hash; parent evaluation and consumer binding remain valid
-- [x] Ambiguous and undetermined real attempts recorded transparently
+- [x] Production build wired to canonical address
+- [x] Production frontend deployed: https://clausem.vercel.app/
+- [x] Connected-wallet menu / copy / explorer / disconnect logic implemented
+- [x] Wallet reload hydration and local disconnect persistence implemented
+- [x] Account/network/provider event reconciliation implemented
+- [x] Source-size limit is surfaced in the registration UI
+
+Browser-only wallet interaction is an operator smoke test and is not mechanically attested by GitHub CI.
+
+## Known limits documented
+
+- [x] 240 KB source-byte limit
+- [x] 18,000 decoded-character semantic limit
+- [x] Oversized sources reject rather than truncate
+- [x] Global `MAX_PAIRS = 1024` registry bound
+- [x] Permissionless registry-exhaustion availability risk documented
 
 Evidence: [STUDIONET_EVIDENCE.md](STUDIONET_EVIDENCE.md) and [STUDIONET_EVIDENCE.json](STUDIONET_EVIDENCE.json).
-
-## Production build and Vercel browser verification
-
-- [x] Production build wired to canonical address and explorer through `frontend/.env.production`
-- [ ] Set the same `VITE_CONTRACT_ADDRESS` and `VITE_EXPLORER_BASE` values in Vercel Production settings
-- [ ] Deploy frontend to Vercel and record its production URL
-- [ ] Manually verify injected wallet reload hydration, wallet menu, copy, explorer, disconnect persistence, explicit reconnect, account/network changes and StudioNet switching
-- [ ] Verify live counts, registration, evaluation, finalized state and explorer links in the deployed app
-
-The user will deploy the frontend through their Vercel account. No production URL or manual wallet result is asserted until those checks occur.
